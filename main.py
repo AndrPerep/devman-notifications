@@ -32,7 +32,7 @@ def main():
             new_attempt = response.json()['new_attempts'][0]
 
             bot.send_message(chat_id=tg_chat_id, text=get_message_text(new_attempt))
-            headers['timestamp'] = str(new_attempt['timestamp'])
+            headers['timestamp'] = new_attempt['timestamp']
 
         except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError):
             continue
