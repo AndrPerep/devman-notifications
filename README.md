@@ -6,9 +6,9 @@
 pip install -r requirements.txt
 ```
 `.env` файл, находящийся в одной директории со скриптом, должен содержать следующие переменные:
-- `TG_TOKEN` – токен телеграм-бота. Чтобы создать бота и получить токен, используйте [@BotFather](https://telegram.me/BotFather);
+- `TELEGRAM_TOKEN` – токен телеграм-бота. Чтобы создать бота и получить токен, используйте [@BotFather](https://telegram.me/BotFather);
 - `DEVMAN_TOKEN` – токен профиля Devman (скопируйте его [здесь](https://dvmn.org/api/docs/));
-- `CHAT_ID` – ID пользователя Telegram, которому будет приходить сообщения. Узнать можно через [@userinfobot](https://telegram.me/userinfobot/).  
+- `TELEGRAM_CHAT_ID` – ID пользователя Telegram, которому будет приходить сообщения. Узнать можно через [@userinfobot](https://telegram.me/userinfobot/).  
 
 Чтобы бот мог присылать сообщения, пользователь должен первым написать ему.
 ### Запуск

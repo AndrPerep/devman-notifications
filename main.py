@@ -20,9 +20,9 @@ def main():
     headers = {
         'Authorization': os.getenv('DEVMAN_TOKEN'),
     }
-    token = os.getenv('TG_TOKEN')
-    chat_id = os.getenv('CHAT_ID')
-    bot = telegram.Bot(token)
+    tg_token = os.getenv('TELEGRAM_TOKEN')
+    tg_chat_id = os.getenv('TELEGRAM_CHAT_ID')
+    bot = telegram.Bot(tg_token)
 
     while True:
         try:
@@ -31,7 +31,7 @@ def main():
 
             new_attempt = response.json()['new_attempts'][0]
 
-            bot.send_message(chat_id=chat_id, text=get_message_text(new_attempt))
+            bot.send_message(chat_id=tg_chat_id, text=get_message_text(new_attempt))
             headers['timestamp'] = str(new_attempt['timestamp'])
 
         except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError):
