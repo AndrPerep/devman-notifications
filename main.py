@@ -40,6 +40,10 @@ def main():
             sleep(60)
             continue
 
+        except KeyError:
+            params['timestamp'] = new_attempt['timestamp']
+            continue
+
 
 if __name__ == '__main__':
     main()
