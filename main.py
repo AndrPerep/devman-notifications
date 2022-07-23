@@ -3,6 +3,7 @@ import requests
 import telegram
 
 from dotenv import load_dotenv
+from time import sleep
 
 
 def get_message_text(new_attempt):
@@ -35,6 +36,7 @@ def main():
             headers['timestamp'] = new_attempt['timestamp']
 
         except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError):
+            sleep(60)
             continue
 
 
