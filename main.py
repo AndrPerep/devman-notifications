@@ -21,27 +21,28 @@ def main():
     headers = {
         'Authorization': os.getenv('DEVMAN_TOKEN'),
     }
-    params=[]
     tg_token = os.getenv('TELEGRAM_TOKEN')
     tg_chat_id = os.getenv('TELEGRAM_CHAT_ID')
     bot = telegram.Bot(tg_token)
 
     while True:
         try:
+            params = {}
             response = requests.get(devman_url, headers=headers, params=params)
             response.raise_for_status()
+            rewiews = response.json()
 
-            new_attempt = response.json()['new_attempts'][0]
+            if rewiews['status'] == 'timeout':
+                params['timestamp'] = rewiews['timestamp_to_request']
+            elif rewiews['status'] == 'found':
+                new_attempt = rewiews['new_attempts'][0]
+                bot.send_message(chat_id=tg_chat_id, text=get_message_text(new_attempt))
+                params['timestamp'] = new_attempt['timestamp']
 
-            bot.send_message(chat_id=tg_chat_id, text=get_message_text(new_attempt))
-            params['timestamp'] = new_attempt['timestamp']
-
-        except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError):
+        except requests.exceptions.ConnectionError:
             sleep(60)
             continue
-
-        except KeyError:
-            params['timestamp'] = new_attempt['timestamp']
+        except requests.exceptions.ReadTimeout:
             continue
 
 
