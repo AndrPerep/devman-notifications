@@ -7,24 +7,22 @@ from dotenv import load_dotenv
 from time import sleep
 
 
-def get_message_text(new_attempt):
-    logging.basicConfig(level=logging.DEBUG)
-    logging.warning('Сообщение составлено')
-
+def get_message_text(new_attempt, logger):
     message_title = f"Проверена работа «{new_attempt['lesson_title']}»\n{new_attempt['lesson_url']}\n\n"
+    logger.info('Составлено сообщение')
     if new_attempt['is_negative']:
         return message_title + 'Предложены новые доработки.'
     else:
         return message_title + 'Работа принята!'
 
 
-def main():
-    load_dotenv()
-
+def main(logger):
     devman_url = 'https://dvmn.org/api/long_polling/'
     headers = {
         'Authorization': os.environ['DEVMAN_TOKEN'],
     }
+    logger.info('Бот запущен')
+
     tg_token = os.environ['TELEGRAM_TOKEN']
     tg_chat_id = os.environ['TELEGRAM_CHAT_ID']
     bot = telegram.Bot(tg_token)
@@ -34,15 +32,15 @@ def main():
             params = {}
             response = requests.get(devman_url, headers=headers, params=params)
             response.raise_for_status()
-            rewiews = response.json()
+            reviews = response.json()
 
-            if rewiews['status'] == 'timeout':
-                params['timestamp'] = rewiews['timestamp_to_request']
-            elif rewiews['status'] == 'found':
-                new_attempt = rewiews['new_attempts'][0]
+            if reviews['status'] == 'timeout':
+                params['timestamp'] = reviews['timestamp_to_request']
+            elif reviews['status'] == 'found':
+                new_attempt = reviews['new_attempts'][0]
                 bot.send_message(chat_id=tg_chat_id, text=get_message_text(new_attempt))
+                logger.info('Отправлено сообщение')
                 params['timestamp'] = new_attempt['timestamp']
-
         except requests.exceptions.ConnectionError:
             sleep(60)
             continue
@@ -51,4 +49,22 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    load_dotenv()
+
+    admin_tg_token = os.environ['ADMIN_TELERGAM_TOKEN']
+    admin_tg_chat_id = os.environ['ADMIN_TELEGRAM_CHAT_ID']
+    admin_bot = telegram.Bot(admin_tg_token)
+
+    class TelegramHandler(logging.Handler):
+        def emit(self, record):
+            log_entry = self.format(record)
+            admin_bot.send_message(chat_id=admin_tg_chat_id, text=log_entry)
+
+    logger = logging.getLogger('TelegramHandler')
+    logger.setLevel(logging.INFO)
+    logger.addHandler(TelegramHandler())
+
+    try:
+        main(logger)
+    except Exception:
+        logger.exception(Exception)
