@@ -9,7 +9,7 @@ from time import sleep
 
 def get_message_text(new_attempt):
     logging.basicConfig(level=logging.DEBUG)
-    logging.debug('Сообщение составлено')
+    logging.warning('Сообщение составлено')
 
     message_title = f"Проверена работа «{new_attempt['lesson_title']}»\n{new_attempt['lesson_url']}\n\n"
     if new_attempt['is_negative']:
