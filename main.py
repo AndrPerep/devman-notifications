@@ -19,10 +19,10 @@ def main():
 
     devman_url = 'https://dvmn.org/api/long_polling/'
     headers = {
-        'Authorization': os.getenv('DEVMAN_TOKEN'),
+        'Authorization': os.environ('DEVMAN_TOKEN'),
     }
-    tg_token = os.getenv('TELEGRAM_TOKEN')
-    tg_chat_id = os.getenv('TELEGRAM_CHAT_ID')
+    tg_token = os.environ('TELEGRAM_TOKEN')
+    tg_chat_id = os.environ('TELEGRAM_CHAT_ID')
     bot = telegram.Bot(tg_token)
 
     while True:
